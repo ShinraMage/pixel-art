@@ -53,13 +53,13 @@
 <body class="bg-gray-900 text-gray-100 h-screen flex flex-col items-center p-1 gap-1 overflow-hidden">
 
   <!-- Toolbar -->
-  <div class="bg-gray-800 rounded px-2 py-0.5 flex items-center gap-1.5 w-full max-w-full shadow-lg shrink-0 text-[11px] leading-tight">
+  <div class="bg-gray-800 rounded px-2 py-0.5 flex items-center justify-center gap-1.5 w-full max-w-full shadow-lg shrink-0 text-[11px] leading-tight">
     <span class="font-bold">Pixel Art</span>
     <span class="text-gray-600">|</span>
 
-    <label class="flex items-center gap-0.5">C<input id="cols" type="number" min="1" max="128" value="16"
+    <label class="flex items-center gap-0.5">C<input id="cols" type="number" min="1" max="128" value="32"
       class="w-10 bg-gray-700 rounded px-0.5 text-center text-[11px]" /></label>
-    <label class="flex items-center gap-0.5">R<input id="rows" type="number" min="1" max="128" value="16"
+    <label class="flex items-center gap-0.5">R<input id="rows" type="number" min="1" max="128" value="32"
       class="w-10 bg-gray-700 rounded px-0.5 text-center text-[11px]" /></label>
     <button id="applyGrid" class="px-1.5 bg-blue-600 hover:bg-blue-500 rounded font-semibold">Go</button>
 
@@ -70,9 +70,9 @@
       <option value="hsl">HSL</option>
     </select>
     <div id="rgbInputs" class="flex items-center gap-0.5">
-      <input id="r" type="number" min="0" max="255" value="0" class="w-9 bg-gray-700 rounded px-0.5 text-center text-[11px]" title="R" />
-      <input id="g" type="number" min="0" max="255" value="0" class="w-9 bg-gray-700 rounded px-0.5 text-center text-[11px]" title="G" />
-      <input id="b" type="number" min="0" max="255" value="0" class="w-9 bg-gray-700 rounded px-0.5 text-center text-[11px]" title="B" />
+      <input id="r" type="number" min="0" max="255" value="135" class="w-9 bg-gray-700 rounded px-0.5 text-center text-[11px]" title="R" />
+      <input id="g" type="number" min="0" max="255" value="206" class="w-9 bg-gray-700 rounded px-0.5 text-center text-[11px]" title="G" />
+      <input id="b" type="number" min="0" max="255" value="250" class="w-9 bg-gray-700 rounded px-0.5 text-center text-[11px]" title="B" />
     </div>
     <div id="hslInputs" class="hidden flex items-center gap-0.5">
       <input id="h" type="number" min="0" max="360" value="0" class="w-9 bg-gray-700 rounded px-0.5 text-center text-[11px]" title="H" />
@@ -80,8 +80,10 @@
       <input id="l" type="number" min="0" max="100" value="50" class="w-9 bg-gray-700 rounded px-0.5 text-center text-[11px]" title="L%" />
     </div>
     <input id="a" type="number" min="0" max="1" step="0.1" value="1" class="w-8 bg-gray-700 rounded px-0.5 text-center text-[11px]" title="Alpha" />
-    <div id="colorPreview" class="w-4 h-4 rounded border border-gray-600 bg-black"></div>
-    <input id="nativePicker" type="color" value="#000000" class="w-4 h-4 rounded cursor-pointer bg-transparent border border-gray-600" title="Color Picker" />
+    <div class="relative w-5 h-5 shrink-0">
+      <div id="colorPreview" class="w-5 h-5 rounded border border-gray-600 cursor-pointer" style="background-color:rgb(135,206,250)" title="Click to pick color"></div>
+      <input id="nativePicker" type="color" value="#87cefa" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+    </div>
     <span class="text-gray-600">|</span>
     <select id="scale" class="bg-gray-700 rounded px-0.5 text-[11px]" title="Export Scale">
       <option value="1">1x</option><option value="2">2x</option><option value="3">3x</option>
