@@ -1,7 +1,26 @@
 <script lang="ts">
 	import { BLANK } from '$lib/types/pixelart';
 	import { hexToRgb, rgbToHex, rgbToHsl, formatColor } from '$lib/color';
-	import { downloadSvg, downloadPng } from '$lib/pixelart';
+	import {
+		downloadSvg,
+		downloadPng,
+		downloadSave,
+		loadSaveFromFile,
+		sparseToCells
+	} from '$lib/pixelart';
+
+	async function handleLoad() {
+		try {
+			const data = await loadSaveFromFile();
+			cols = data.cols;
+			rows = data.rows;
+			colsInput = data.cols;
+			rowsInput = data.rows;
+			cells = sparseToCells(data.cols, data.rows, data.pixels);
+		} catch {
+			// user cancelled or invalid file
+		}
+	}
 
 	// grid state
 	let cols = $state(32);
@@ -282,6 +301,14 @@
 	>
 	<button onclick={clearGrid} class="rounded bg-red-600 px-1.5 font-semibold hover:bg-red-500"
 		>Clear</button
+	>
+	<span class="text-gray-600">|</span>
+	<button
+		onclick={() => downloadSave(cols, rows, cells)}
+		class="rounded bg-amber-600 px-1.5 font-semibold hover:bg-amber-500">Save</button
+	>
+	<button onclick={handleLoad} class="rounded bg-cyan-600 px-1.5 font-semibold hover:bg-cyan-500"
+		>Load</button
 	>
 
 	<!-- Right: Shinra Mage -->
