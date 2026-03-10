@@ -1,6 +1,38 @@
 import { BLANK, type SaveData } from './types/pixelart';
 import { colorToRgba } from './color';
 
+/** BFS flood fill: replace all connected cells of the same color starting from index */
+export function floodFill(cols: number, rows: number, cells: string[], index: number, newColor: string): void {
+	const targetColor = cells[index];
+	if (targetColor === newColor) return;
+
+	const queue = [index];
+	const visited = new Set<number>();
+	visited.add(index);
+
+	while (queue.length > 0) {
+		const i = queue.shift()!;
+		cells[i] = newColor;
+
+		const x = i % cols;
+		const y = Math.floor(i / cols);
+
+		const neighbors = [
+			y > 0 ? i - cols : -1,        // up
+			y < rows - 1 ? i + cols : -1,  // down
+			x > 0 ? i - 1 : -1,            // left
+			x < cols - 1 ? i + 1 : -1      // right
+		];
+
+		for (const n of neighbors) {
+			if (n >= 0 && !visited.has(n) && cells[n] === targetColor) {
+				visited.add(n);
+				queue.push(n);
+			}
+		}
+	}
+}
+
 export function buildSvgString(cols: number, rows: number, cells: string[], scale: number): string {
 	const w = cols * scale;
 	const h = rows * scale;

@@ -6,8 +6,12 @@
 		downloadPng,
 		downloadSave,
 		loadSaveFromFile,
-		sparseToCells
+		sparseToCells,
+		floodFill
 	} from '$lib/pixelart';
+
+	type Tool = 'pen' | 'bucket';
+	let tool: Tool = $state('pen');
 
 	async function handleLoad() {
 		try {
@@ -111,8 +115,15 @@
 	}
 
 	function handlePointerDown(e: PointerEvent, index: number) {
+		const isErase = e.button === 2;
+		if (tool === 'bucket') {
+			const color = isErase ? BLANK : currentColor;
+			floodFill(cols, rows, cells, index, color);
+			cells = [...cells]; // trigger reactivity
+			return;
+		}
 		painting = true;
-		erasing = e.button === 2;
+		erasing = isErase;
 		paintCell(index, erasing);
 	}
 
@@ -279,6 +290,18 @@
 		/>
 	</div>
 
+	<!-- Tool selector -->
+	<button
+		onclick={() => (tool = 'pen')}
+		class="rounded px-1.5 font-semibold {tool === 'pen' ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'}"
+		title="Pen (draw)">Pen</button
+	>
+	<button
+		onclick={() => (tool = 'bucket')}
+		class="rounded px-1.5 font-semibold {tool === 'bucket' ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'}"
+		title="Bucket (flood fill)">Fill</button
+	>
+
 	<span class="text-gray-600">|</span>
 
 	<select bind:value={scale} class="rounded bg-gray-700 px-0.5 text-[11px]" title="Export Scale">
@@ -355,7 +378,7 @@
 					style:height="{rulerH}px"
 					style:font-size="{rulerFontSize}px"
 				>
-					{c + 1}
+					{c}
 				</div>
 			{/each}
 		</div>
@@ -371,14 +394,14 @@
 					style:height="{cellSize}px"
 					style:font-size="{rulerFontSize}px"
 				>
-					{rv + 1}
+					{rv}
 				</div>
 			{/each}
 		</div>
 
 		<!-- pixel grid -->
 		<div
-			class="grid select-none"
+			class="grid select-none {tool === 'bucket' ? 'bucket-cursor' : ''}"
 			style:grid-template-columns="repeat({cols}, {cellSize}px)"
 			style:grid-template-rows="repeat({rows}, {cellSize}px)"
 			style="gap:0; touch-action:none;"
@@ -406,7 +429,7 @@
 					style:height="{cellSize}px"
 					style:font-size="{rulerFontSize}px"
 				>
-					{rv + 1}
+					{rv}
 				</div>
 			{/each}
 		</div>
@@ -422,7 +445,7 @@
 					style:height="{rulerH}px"
 					style:font-size="{rulerFontSize}px"
 				>
-					{c + 1}
+					{c}
 				</div>
 			{/each}
 		</div>
@@ -434,7 +457,7 @@
 <style>
 	.cell {
 		box-sizing: border-box;
-		cursor: pointer;
+		cursor: crosshair;
 		border: 1px solid rgba(255, 255, 255, 0.12);
 		background-image:
 			linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
@@ -455,6 +478,9 @@
 		outline: 2px solid rgba(59, 130, 246, 0.7);
 		outline-offset: -2px;
 		z-index: 1;
+	}
+	.bucket-cursor .cell {
+		cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24'%3E%3Cpath d='M16 6l-1-4H9L8 6' fill='none' stroke='white' stroke-width='1.5'/%3E%3Crect x='6' y='6' width='12' height='12' rx='1' fill='none' stroke='white' stroke-width='1.5'/%3E%3Cpath d='M6 10h12' stroke='white' stroke-width='1.5'/%3E%3Cpath d='M10 10v8' stroke='white' stroke-width='1' opacity='.4'/%3E%3Cpath d='M14 10v8' stroke='white' stroke-width='1' opacity='.4'/%3E%3Cpath d='M20 14c1.5 2 1.5 4 0 5s-2-1 0-5z' fill='%2360a5fa' stroke='white' stroke-width='1'/%3E%3C/svg%3E") 4 18, pointer;
 	}
 	.ruler-label {
 		display: flex;
